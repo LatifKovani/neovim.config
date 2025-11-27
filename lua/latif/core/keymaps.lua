@@ -19,9 +19,6 @@ keymap.set("n", "<C-q>", ":q<CR>", { noremap = true, silent = true, desc = "Quit
 -- Quit without saving with Ctrl+Q followed by i
 keymap.set("n", "<C-q>i", ":q!<CR>", { noremap = true, silent = true, desc = "Quit without saving" })
 
--- clear search highlights
-keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
-
 -- delete single character without copying into register
 keymap.set("n", "x", '"_x')
 

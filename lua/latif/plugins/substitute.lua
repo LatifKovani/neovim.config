@@ -57,7 +57,7 @@ return {
 				"Replace word under cursor (no confirm, buffer-wide)",
 			},
 			{ "n", "<leader>ra", replace_last_search_no_confirm, "Replace all matches of last search (no confirm)" },
-			{ "n", "<leader>nh", clear_search_highlight, "Clear search highlights" },
+			{ "n", "<leader>rh", clear_search_highlight, "Clear search highlights" },
 		}
 
 		for _, map in ipairs(keymaps) do
