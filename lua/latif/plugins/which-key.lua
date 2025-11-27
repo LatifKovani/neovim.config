@@ -29,7 +29,7 @@ return {
 				{ "<leader>t", group = "Terminal", icon = "" },
 				{ "<leader>x", group = "Diagnostics", icon = "" },
 				{ "<leader>b", group = "Buffers", icon = "" },
-				{ "<leader>l", group = "Git", icon = "" },
+				{ "<leader>g", group = "Git", icon = "" },
 				{ "<leader>G", group = "Git", icon = "" },
 			},
 		})
