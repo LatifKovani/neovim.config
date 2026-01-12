@@ -29,6 +29,7 @@ keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decremen
 ---------------------
 -- Buffer Navigation -------------------
 
+vim.keymap.set("n", "E", "$", { noremap = true })
 -- Buffer navigation with Telescope
 keymap.set("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "Show buffers" })
 keymap.set("n", "<Tab>", "<cmd>Telescope buffers<CR>", { desc = "Switch buffers" })
