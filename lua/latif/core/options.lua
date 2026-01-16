@@ -13,7 +13,7 @@ opt.expandtab = true -- expand tab to spaces
 opt.autoindent = true -- copy indent from current line when starting new one
 
 -- line wrapping
-opt.wrap = true -- disable line wrapping
+opt.wrap = true -- enable line wrapping
 
 -- search settings
 opt.ignorecase = true -- ignore case when searching
@@ -22,15 +22,18 @@ opt.smartcase = true -- if you include mixed case in your search, assumes you wa
 -- cursor line
 opt.cursorline = true -- highlight the current cursor line
 
--- appearance
-
 -- turn on termguicolors for nightfly colorscheme to work
--- (have to use iterm2 or any other true color terminal)
 opt.termguicolors = true
 opt.background = "dark" -- colorschemes that can be light or dark will be made dark
 opt.signcolumn = "yes" -- show sign column so that text doesn't shift
 
-vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ea6962", bold = true }) -- Red color for current line number
+-- line number color
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ea6962", bold = true })
+	end,
+})
 -- backspace
 opt.backspace = "indent,eol,start" -- allow backspace on indent, end of line or insert mode start position
 

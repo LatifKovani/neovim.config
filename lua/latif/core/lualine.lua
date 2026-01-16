@@ -1,9 +1,3 @@
--- lua/latif/plugins/lualine.lua
--- Single-file, self-contained lualine config.
--- Updated: switched embedded color palette and theme to a "Nordic" look per request.
--- Only the color variables and bubbles_theme values were changed to use a Nordic-inspired palette.
--- All other behavior and components are preserved exactly.
-
 local M = {}
 
 local function safe_require(name)

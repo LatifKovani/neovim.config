@@ -344,8 +344,6 @@ return {
 							PmenuSbar = { bg = colors.surface0 },
 							PmenuThumb = { bg = colors.surface2 },
 							PmenuExtra = { bg = colors.mantle, fg = colors.subtext1 },
-							TSPunctBracket = { fg = colors.red },
-							["@punctuation.bracket"] = { fg = colors.red },
 							-- Floating windows
 							NormalFloat = { bg = colors.mantle },
 							FloatBorder = { bg = colors.mantle, fg = colors.surface2 },

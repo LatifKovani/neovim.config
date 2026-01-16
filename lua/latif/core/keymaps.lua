@@ -1,6 +1,5 @@
 -- set leader key to space
 vim.g.mapleader = " "
-
 local keymap = vim.keymap -- for conciseness
 
 ---------------------
@@ -15,7 +14,6 @@ keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { noremap = true, silent = true, desc =
 
 -- Quit with Ctrl+Q
 keymap.set("n", "<C-q>", ":q<CR>", { noremap = true, silent = true, desc = "Quit" })
-
 -- Quit without saving with Ctrl+Q followed by i
 keymap.set("n", "<C-q>i", ":q!<CR>", { noremap = true, silent = true, desc = "Quit without saving" })
 
@@ -27,9 +25,37 @@ keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- incremen
 keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
 
 ---------------------
+-- nvim-surround Keymaps -------------------
+
+-- Visual mode: Select text and press S, then:
+--   t + tag_name  -> wrap with HTML tag (e.g., t + div)
+--   "             -> wrap with double quotes
+--   '             -> wrap with single quotes
+--   (             -> wrap with parentheses
+--   {             -> wrap with braces
+--   [             -> wrap with brackets
+
+-- Normal mode examples:
+--   ysiw"         -> wrap word with quotes
+--   yss<div>      -> wrap line with div
+--   ds"           -> delete surrounding quotes
+--   cs"'          -> change quotes to single quotes
+
+keymap.set("n", "ys", "<Plug>(nvim-surround-normal)", { desc = "Surround: add (motion)" })
+keymap.set("n", "yss", "<Plug>(nvim-surround-normal-cur)", { desc = "Surround: add (line)" })
+keymap.set("n", "yS", "<Plug>(nvim-surround-normal-line)", { desc = "Surround: add (line mode)" })
+keymap.set("n", "ySS", "<Plug>(nvim-surround-normal-cur-line)", { desc = "Surround: add (current line)" })
+keymap.set("v", "S", "<Plug>(nvim-surround-visual)", { desc = "Surround: add (visual)" })
+keymap.set("v", "gS", "<Plug>(nvim-surround-visual-line)", { desc = "Surround: add (visual line)" })
+keymap.set("n", "ds", "<Plug>(nvim-surround-delete)", { desc = "Surround: delete" })
+keymap.set("n", "cs", "<Plug>(nvim-surround-change)", { desc = "Surround: change" })
+keymap.set("n", "cS", "<Plug>(nvim-surround-change-line)", { desc = "Surround: change (line)" })
+
+---------------------
 -- Buffer Navigation -------------------
 
 vim.keymap.set("n", "E", "$", { noremap = true })
+
 -- Buffer navigation with Telescope
 keymap.set("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "Show buffers" })
 keymap.set("n", "<Tab>", "<cmd>Telescope buffers<CR>", { desc = "Switch buffers" })
@@ -41,13 +67,17 @@ keymap.set("n", "<leader>ba", "<C-^>", { noremap = true, silent = true, desc = "
 keymap.set("n", "<leader>bd", ":bdelete<CR>", { noremap = true, silent = true, desc = "Delete buffer" })
 keymap.set("n", "<leader>bl", ":buffers<CR>:buffer<Space>", { noremap = true, desc = "List and select buffer" })
 keymap.set("n", "<S-Tab>", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
------------------------ Window Management -------------------
+
+-----------------------
+-- Window Management -------------------
+
 keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
 keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
 keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
 
------------------------ Tab Management -------------------
+-----------------------
+-- Tab Management -------------------
 
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- open new tab
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" }) -- close current tab

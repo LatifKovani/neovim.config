@@ -8,6 +8,9 @@ return {
 		-- set keymaps
 		local keymap = vim.keymap -- for conciseness
 
+		keymap.set("n", "<leader>td", function()
+			vim.api.nvim_put({ "TODO: " }, "c", true, true)
+		end, { desc = "Insert TODO comment" })
 		keymap.set("n", "]t", function()
 			todo_comments.jump_next()
 		end, { desc = "Next todo comment" })
