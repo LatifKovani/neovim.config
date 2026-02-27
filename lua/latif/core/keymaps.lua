@@ -1,41 +1,17 @@
--- set leader key to space
 vim.g.mapleader = " "
-local keymap = vim.keymap -- for conciseness
+local keymap = vim.keymap
 
----------------------
--- General Keymaps -------------------
-
--- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
-
---Save files
 keymap.set("n", "<C-s>", ":w<CR>", { noremap = true, silent = true, desc = "Save file" })
 keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { noremap = true, silent = true, desc = "Save file (insert mode)" })
-
--- Quit with Ctrl+Q
 keymap.set("n", "<C-q>", ":q<CR>", { noremap = true, silent = true, desc = "Quit" })
--- Quit without saving with Ctrl+Q followed by i
 keymap.set("n", "<C-q>i", ":q!<CR>", { noremap = true, silent = true, desc = "Quit without saving" })
+keymap.set("n", "x", '"_x', { desc = "Delete single character without copying" })
+keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" })
+keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" })
+keymap.set("n", "E", "$", { noremap = true, desc = "Jump to end of line" })
 
--- delete single character without copying into register
-keymap.set("n", "x", '"_x')
-
--- increment/decrement numbers
-keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
-keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decrement
-
----------------------
--- nvim-surround Keymaps -------------------
-
--- Visual mode: Select text and press S, then:
---   t + tag_name  -> wrap with HTML tag (e.g., t + div)
---   "             -> wrap with double quotes
---   '             -> wrap with single quotes
---   (             -> wrap with parentheses
---   {             -> wrap with braces
---   [             -> wrap with brackets
-
--- Normal mode examples:
+-- ── Surround ──────────────────────────────────────────────────────────────────
 --   ysiw"         -> wrap word with quotes
 --   yss<div>      -> wrap line with div
 --   ds"           -> delete surrounding quotes
@@ -51,16 +27,9 @@ keymap.set("n", "ds", "<Plug>(nvim-surround-delete)", { desc = "Surround: delete
 keymap.set("n", "cs", "<Plug>(nvim-surround-change)", { desc = "Surround: change" })
 keymap.set("n", "cS", "<Plug>(nvim-surround-change-line)", { desc = "Surround: change (line)" })
 
----------------------
--- Buffer Navigation -------------------
-
-vim.keymap.set("n", "E", "$", { noremap = true })
-
--- Buffer navigation with Telescope
+-- ── Buffers ───────────────────────────────────────────────────────────────────
 keymap.set("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "Show buffers" })
 keymap.set("n", "<Tab>", "<cmd>Telescope buffers<CR>", { desc = "Switch buffers" })
-
--- Navigate buffers without GUI
 keymap.set("n", "<leader>bn", ":bnext<CR>", { noremap = true, silent = true, desc = "Next buffer" })
 keymap.set("n", "<leader>bp", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 keymap.set("n", "<leader>ba", "<C-^>", { noremap = true, silent = true, desc = "Alternate buffer" })
@@ -68,19 +37,71 @@ keymap.set("n", "<leader>bd", ":bdelete<CR>", { noremap = true, silent = true, d
 keymap.set("n", "<leader>bl", ":buffers<CR>:buffer<Space>", { noremap = true, desc = "List and select buffer" })
 keymap.set("n", "<S-Tab>", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 
------------------------
--- Window Management -------------------
+-- ── Splits ────────────────────────────────────────────────────────────────────
+keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" })
+keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })
+keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })
+keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" })
 
-keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+-- ── Tabs ──────────────────────────────────────────────────────────────────────
+keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
+keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
+keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
+keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
+keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
 
------------------------
--- Tab Management -------------------
+-- ── LSP (buffer-local, only active when LSP attaches) ─────────────────────────
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("LspKeymaps", { clear = true }),
+	callback = function(event)
+		local opts = { noremap = true, silent = true, buffer = event.buf }
 
-keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- open new tab
-keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" }) -- close current tab
-keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
-keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
-keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+		opts.desc = "Show LSP references"
+		keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
+
+		opts.desc = "Go to declaration"
+		keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+
+		opts.desc = "Show LSP definitions"
+		keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+
+		opts.desc = "Show LSP implementations"
+		keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
+
+		opts.desc = "Show LSP type definitions"
+		keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+
+		opts.desc = "See available code actions"
+		keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, opts)
+
+		opts.desc = "Smart rename"
+		keymap.set("n", "<leader>ln", vim.lsp.buf.rename, opts)
+
+		opts.desc = "Show buffer diagnostics"
+		keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
+
+		opts.desc = "Show line diagnostics"
+		keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+
+		opts.desc = "Go to previous diagnostic"
+		keymap.set("n", "[d", function()
+			vim.diagnostic.jump({ count = -1 })
+		end, opts)
+
+		opts.desc = "Go to next diagnostic"
+		keymap.set("n", "]d", function()
+			vim.diagnostic.jump({ count = 1 })
+		end, opts)
+		opts.desc = "Show documentation for what is under cursor"
+		keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
+		opts.desc = "Restart LSP"
+		keymap.set("n", "<leader>ls", ":LspRestart<CR>", opts)
+
+		keymap.set("n", "<leader>ll", function()
+			require("lint").try_lint()
+		end, { desc = "Trigger linting for current file" })
+
+		vim.keymap.set("n", "<Leader>gf", vim.lsp.buf.format, {})
+	end,
+})
