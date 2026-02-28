@@ -5,9 +5,7 @@ return {
 	config = function()
 		local todo_comments = require("todo-comments")
 
-		-- set keymaps
-		local keymap = vim.keymap -- for conciseness
-
+		local keymap = vim.keymap
 		keymap.set("n", "<leader>td", function()
 			vim.api.nvim_put({ "TODO: " }, "c", true, true)
 		end, { desc = "Insert TODO comment" })

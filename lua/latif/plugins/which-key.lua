@@ -3,9 +3,9 @@ return {
 	event = "VeryLazy",
 	opts = {
 		icons = {
-			breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-			separator = "➜", -- symbol used between a key and it's label
-			group = "", -- symbol prepended to a group
+			breadcrumb = "»",
+			separator = "➜",
+			group = "",
 		},
 		preset = "classic",
 		win = {
@@ -23,7 +23,6 @@ return {
 				{ "<leader>s", group = "Sessions", icon = "󰔚 " },
 				{ "<leader>e", group = "FileExplorer", icon = "󰮗 " },
 				{ "<leader>f", group = "Find", icon = " " },
-				{ "<leader>h", group = "LSP", icon = "" },
 				{ "<leader>l", group = "Neovim", icon = " " },
 				{ "<leader>r", group = "Replace Word", icon = "󰛔 " },
 				{ "<leader>t", group = "Terminal", icon = " " },
@@ -34,8 +33,8 @@ return {
 				{ "<leader>m", group = "Format ", icon = "󰉣 " },
 			},
 		})
-		vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = "#040405" }) -- Main background
-		vim.api.nvim_set_hl(0, "WhichKeyBorder", { bg = "#040405", fg = "#565f89" }) -- Border color
-		vim.api.nvim_set_hl(0, "WhichKeyNormal", { bg = "#040405" }) -- Normal text background
+		vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = "#040405" })
+		vim.api.nvim_set_hl(0, "WhichKeyBorder", { bg = "#040405", fg = "#565f89" })
+		vim.api.nvim_set_hl(0, "WhichKeyNormal", { bg = "#040405" })
 	end,
 }

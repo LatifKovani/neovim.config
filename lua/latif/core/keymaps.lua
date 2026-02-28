@@ -28,8 +28,7 @@ keymap.set("n", "cs", "<Plug>(nvim-surround-change)", { desc = "Surround: change
 keymap.set("n", "cS", "<Plug>(nvim-surround-change-line)", { desc = "Surround: change (line)" })
 
 -- ── Buffers ───────────────────────────────────────────────────────────────────
-keymap.set("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "Show buffers" })
-keymap.set("n", "<Tab>", "<cmd>Telescope buffers<CR>", { desc = "Switch buffers" })
+-- Note: <leader>bb and <Tab> for buffer switching are handled in fzf-lua.lua
 keymap.set("n", "<leader>bn", ":bnext<CR>", { noremap = true, silent = true, desc = "Next buffer" })
 keymap.set("n", "<leader>bp", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 keymap.set("n", "<leader>ba", "<C-^>", { noremap = true, silent = true, desc = "Alternate buffer" })
@@ -48,37 +47,22 @@ keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
 keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
-keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
 
 -- ── LSP (buffer-local, only active when LSP attaches) ─────────────────────────
+-- Note: gR, gd, gi, gt, <leader>D are handled in fzf-lua.lua via its own LspAttach
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspKeymaps", { clear = true }),
 	callback = function(event)
 		local opts = { noremap = true, silent = true, buffer = event.buf }
 
-		opts.desc = "Show LSP references"
-		keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts)
-
 		opts.desc = "Go to declaration"
 		keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-
-		opts.desc = "Show LSP definitions"
-		keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
-
-		opts.desc = "Show LSP implementations"
-		keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
-
-		opts.desc = "Show LSP type definitions"
-		keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts)
 
 		opts.desc = "See available code actions"
 		keymap.set({ "n", "v" }, "<leader>la", vim.lsp.buf.code_action, opts)
 
 		opts.desc = "Smart rename"
 		keymap.set("n", "<leader>ln", vim.lsp.buf.rename, opts)
-
-		opts.desc = "Show buffer diagnostics"
-		keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
 		opts.desc = "Show line diagnostics"
 		keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
@@ -92,6 +76,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		keymap.set("n", "]d", function()
 			vim.diagnostic.jump({ count = 1 })
 		end, opts)
+
 		opts.desc = "Show documentation for what is under cursor"
 		keymap.set("n", "K", vim.lsp.buf.hover, opts)
 

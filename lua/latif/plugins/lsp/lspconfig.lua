@@ -61,13 +61,6 @@ return {
 				float = true,
 			})
 
-			vim.api.nvim_create_autocmd("CursorHold", {
-				group = vim.api.nvim_create_augroup("LspDiagnostics", { clear = true }),
-				callback = function()
-					vim.diagnostic.open_float(nil, { focus = false })
-				end,
-			})
-
 			vim.lsp.config("*", {
 				capabilities = capabilities,
 			})

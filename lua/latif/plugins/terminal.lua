@@ -3,7 +3,7 @@ return {
 	init = function()
 		vim.keymap.set(
 			"n",
-			"<leader>tf",
+			"<leader>tt",
 			"<cmd>TermNew direction=float<cr>",
 			{ desc = "ToggleTerm | New Float Terminal", silent = true }
 		)
@@ -45,17 +45,15 @@ return {
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>tt",
+			"<leader>tT",
 			"<cmd>ToggleTermToggleAll<cr>",
-			{ desc = "ToggleTerm | Toggle/Close All Terminal", silent = true }
+			{ desc = "ToggleTerm | Toggle/Close All Terminals", silent = true }
 		)
 	end,
 	config = function()
-		-- Set custom highlight groups for toggleterm
 		vim.api.nvim_set_hl(0, "ToggleTermNormal", { bg = "#040405", fg = "#ebdbb2" })
 		vim.api.nvim_set_hl(0, "ToggleTermBorder", { bg = "#040405", fg = "#565f89" })
 
-		-- Terminal mode keymaps for easier exit
 		vim.keymap.set("t", "<C-q>", "<C-\\><C-n>:q<CR>", { noremap = true, silent = true, desc = "Quit terminal" })
 		vim.keymap.set("t", "jk", "<C-\\><C-n>", { noremap = true, silent = true, desc = "Exit terminal mode" })
 		vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true, desc = "Exit terminal mode" })
@@ -78,18 +76,12 @@ return {
 			shell = vim.o.shell,
 			autochdir = true,
 			highlights = {
-				Normal = {
-					link = "ToggleTermNormal",
-				},
-				NormalFloat = {
-					link = "ToggleTermNormal",
-				},
-				FloatBorder = {
-					link = "ToggleTermBorder",
-				},
+				Normal = { link = "ToggleTermNormal" },
+				NormalFloat = { link = "ToggleTermNormal" },
+				FloatBorder = { link = "ToggleTermBorder" },
 			},
 			float_opts = {
-				border = "single", -- Same border style as buffer-manager
+				border = "single",
 				height = math.ceil(vim.o.lines * 1.0 - 4),
 				width = math.ceil(vim.o.columns * 0.8),
 				winblend = 0,

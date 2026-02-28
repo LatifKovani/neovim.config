@@ -126,22 +126,6 @@ return {
 				end,
 				desc = "Undo Stage Hunk",
 			},
-			-- {
-			--   "<leader>Go", require("telescope.builtin").git_status,
-			--   desc = "Open changed file"
-			-- },
-			-- {
-			--   "<leader>Gb", require("telescope.builtin").git_branches,
-			--   desc = "Checkout branch"
-			-- },
-			-- {
-			--   "<leader>Gc", require("telescope.builtin").git_commits,
-			--   desc = "Checkout commit"
-			-- },
-			-- {
-			--   "<leader>GC", require("telescope.builtin").git_bcommits,
-			--   desc = "Checkout commit(for current file)"
-			-- },
 			{
 				"<leader>Gd",
 				function()
@@ -156,11 +140,10 @@ return {
 		event = "VeryLazy",
 		cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
 	},
-	-- Git related plugins
+
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
 
-	-- not git, but it's okay
 	{
 		"mbbill/undotree",
 		keys = {

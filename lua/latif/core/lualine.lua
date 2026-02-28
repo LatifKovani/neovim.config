@@ -227,7 +227,7 @@ function M.setup()
 			"location",
 			icon = { " ", align = "left" },
 			fmt = function(str)
-				local fixed_width = 7
+				local fixed_width = 3
 				return string.format("%" .. fixed_width .. "s", str)
 			end,
 		},
@@ -264,7 +264,7 @@ function M.setup()
 		filetypes = { "oil" },
 	}
 
-	local telescope_ext = {
+	local fzf_ext = {
 		sections = {
 			lualine_a = {
 				{
@@ -278,7 +278,7 @@ function M.setup()
 			lualine_c = {
 				{
 					function()
-						return "Telescope"
+						return "fzf-lua"
 					end,
 					color = { fg = C.text },
 					icon = { " ", color = { fg = C.surface1 } },
@@ -288,13 +288,13 @@ function M.setup()
 			lualine_y = {},
 			lualine_z = default_z,
 		},
-		filetypes = { "TelescopePrompt" },
+		filetypes = { "fzf" },
 	}
 
 	lualine.setup({
 		options = {
 			theme = nordic,
-			disabled_filetypes = { "dashboard" },
+			disabled_filetypes = { "dashboard", "snacks_dashboard" },
 			globalstatus = true,
 			section_separators = { left = " ", right = " " },
 			component_separators = { left = "", right = "" },
@@ -338,7 +338,7 @@ function M.setup()
 			lualine_y = {},
 			lualine_z = default_z,
 		},
-		extensions = { telescope_ext, oil_ext },
+		extensions = { fzf_ext, oil_ext },
 	})
 end
 
