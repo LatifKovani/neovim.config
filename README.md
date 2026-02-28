@@ -16,7 +16,7 @@
 
 > Code editing with LSP diagnostics
 
-![Editing](./assets/editing.png)
+![Editing](./assets/editing2.png)
 
 ---
 
