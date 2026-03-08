@@ -18,14 +18,22 @@ opt.background = "dark"
 opt.signcolumn = "yes"
 opt.cmdheight = 0
 
+vim.api.nvim_create_autocmd("FocusGained", {
+	callback = function()
+		vim.fn.setreg("+", vim.fn.system("wl-paste --no-newline"))
+		vim.fn.setreg("*", vim.fn.system("wl-paste --no-newline"))
+	end,
+})
+
+-- Line number color on colorscheme change
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*",
 	callback = function()
 		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ea6962", bold = true })
 	end,
 })
-opt.backspace = "indent,eol,start"
 
+opt.backspace = "indent,eol,start"
 opt.splitright = true
 opt.splitbelow = true
 opt.swapfile = false

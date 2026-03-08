@@ -7,8 +7,6 @@ keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { noremap = true, silent = true, desc =
 keymap.set("n", "<C-q>", ":q<CR>", { noremap = true, silent = true, desc = "Quit" })
 keymap.set("n", "<C-q>i", ":q!<CR>", { noremap = true, silent = true, desc = "Quit without saving" })
 keymap.set("n", "x", '"_x', { desc = "Delete single character without copying" })
-keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" })
-keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" })
 keymap.set("n", "E", "$", { noremap = true, desc = "Jump to end of line" })
 
 -- ── Surround ──────────────────────────────────────────────────────────────────
@@ -17,23 +15,11 @@ keymap.set("n", "E", "$", { noremap = true, desc = "Jump to end of line" })
 --   ds"           -> delete surrounding quotes
 --   cs"'          -> change quotes to single quotes
 
-keymap.set("n", "ys", "<Plug>(nvim-surround-normal)", { desc = "Surround: add (motion)" })
-keymap.set("n", "yss", "<Plug>(nvim-surround-normal-cur)", { desc = "Surround: add (line)" })
-keymap.set("n", "yS", "<Plug>(nvim-surround-normal-line)", { desc = "Surround: add (line mode)" })
-keymap.set("n", "ySS", "<Plug>(nvim-surround-normal-cur-line)", { desc = "Surround: add (current line)" })
-keymap.set("v", "S", "<Plug>(nvim-surround-visual)", { desc = "Surround: add (visual)" })
-keymap.set("v", "gS", "<Plug>(nvim-surround-visual-line)", { desc = "Surround: add (visual line)" })
-keymap.set("n", "ds", "<Plug>(nvim-surround-delete)", { desc = "Surround: delete" })
-keymap.set("n", "cs", "<Plug>(nvim-surround-change)", { desc = "Surround: change" })
-keymap.set("n", "cS", "<Plug>(nvim-surround-change-line)", { desc = "Surround: change (line)" })
-
 -- ── Buffers ───────────────────────────────────────────────────────────────────
--- Note: <leader>bb and <Tab> for buffer switching are handled in fzf-lua.lua
 keymap.set("n", "<leader>bn", ":bnext<CR>", { noremap = true, silent = true, desc = "Next buffer" })
-keymap.set("n", "<leader>bp", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
+keymap.set("n", "<leader>bp", "<C-^>", { noremap = true, silent = true, desc = "Toggle last buffer" })
 keymap.set("n", "<leader>ba", "<C-^>", { noremap = true, silent = true, desc = "Alternate buffer" })
 keymap.set("n", "<leader>bd", ":bdelete<CR>", { noremap = true, silent = true, desc = "Delete buffer" })
-keymap.set("n", "<leader>bl", ":buffers<CR>:buffer<Space>", { noremap = true, desc = "List and select buffer" })
 keymap.set("n", "<S-Tab>", ":bprevious<CR>", { noremap = true, silent = true, desc = "Previous buffer" })
 
 -- ── Splits ────────────────────────────────────────────────────────────────────
@@ -42,14 +28,7 @@ keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" })
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" })
 keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" })
 
--- ── Tabs ──────────────────────────────────────────────────────────────────────
-keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
-keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
-keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
-keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
-
 -- ── LSP (buffer-local, only active when LSP attaches) ─────────────────────────
--- Note: gR, gd, gi, gt, <leader>D are handled in fzf-lua.lua via its own LspAttach
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspKeymaps", { clear = true }),
 	callback = function(event)

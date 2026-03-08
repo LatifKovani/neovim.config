@@ -38,8 +38,6 @@ return {
 					{ icon = " ", key = "e", desc = "New File", action = ":ene | startinsert" },
 					{ icon = "󰈞 ", key = "f", desc = "Find File", action = ":FzfLua files" },
 					{ icon = "󰛔 ", key = "s", desc = "Find Word", action = ":FzfLua live_grep" },
-					{ icon = " ", key = "r", desc = "Recent Files", action = ":FzfLua oldfiles" },
-					{ icon = "󰁯 ", key = "R", desc = "Restore Session", action = ":SessionRestore" },
 					{ icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
 					{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
 				},

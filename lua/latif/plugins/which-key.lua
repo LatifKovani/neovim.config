@@ -31,6 +31,7 @@ return {
 				{ "<leader>g", group = "Git", icon = " " },
 				{ "<leader>G", group = "Git", icon = " " },
 				{ "<leader>m", group = "Format ", icon = "󰉣 " },
+				{ "<leader>n", group = "Notifications", icon = "󰎟" },
 			},
 		})
 		vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = "#040405" })

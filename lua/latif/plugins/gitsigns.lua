@@ -42,24 +42,8 @@ return {
 				status_formatter = nil,
 				update_debounce = 200,
 				max_file_length = 40000,
-				preview_config = {
-					border = "rounded",
-					style = "minimal",
-					relative = "cursor",
-					row = 0,
-					col = 1,
-				},
-
 				on_attach = function(bufnr)
-					vim.keymap.set(
-						"n",
-						"<leader>H",
-						require("gitsigns").preview_hunk,
-						{ buffer = bufnr, desc = "Preview git hunk" }
-					)
-
 					vim.keymap.set("n", "]]", require("gitsigns").next_hunk, { buffer = bufnr, desc = "Next git hunk" })
-
 					vim.keymap.set(
 						"n",
 						"[[",
@@ -83,13 +67,6 @@ return {
 					require("gitsigns").blame_line()
 				end,
 				desc = "Blame",
-			},
-			{
-				"<leader>Gp",
-				function()
-					require("gitsigns").preview_hunk()
-				end,
-				desc = "Preview Hunk",
 			},
 			{
 				"<leader>Gr",
@@ -140,10 +117,8 @@ return {
 		event = "VeryLazy",
 		cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
 	},
-
 	"tpope/vim-fugitive",
 	"tpope/vim-rhubarb",
-
 	{
 		"mbbill/undotree",
 		keys = {

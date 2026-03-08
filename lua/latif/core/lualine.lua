@@ -213,7 +213,7 @@ function M.setup()
 		},
 		{
 			function()
-				return "󰉼 "
+				return " 󰉼 "
 			end,
 			color = function()
 				return state.format_enabled and { fg = C.green } or { fg = C.surface1 }

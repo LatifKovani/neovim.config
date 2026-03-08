@@ -10,16 +10,7 @@ return {
 		vim.api.nvim_set_hl(0, "BufferManagerBorder", { bg = "#040405", fg = "#565f89" })
 
 		require("buffer_manager").setup({
-			select_menu_item_commands = {
-				v = {
-					key = "<C-v>",
-					command = "vsplit",
-				},
-				h = {
-					key = "<C-h>",
-					command = "split",
-				},
-			},
+			select_menu_item_commands = {},
 			focus_alternate_buffer = false,
 			short_file_names = true,
 			short_term_names = true,
