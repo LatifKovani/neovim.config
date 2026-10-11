@@ -18,6 +18,7 @@ return {
 				markdown = { "prettierd" },
 				python = { "isort", "black" },
 				lua = { "stylua" },
+				qml = { "qmlformat" },
 			},
 			format_on_save = {
 				lsp_format = "fallback",
