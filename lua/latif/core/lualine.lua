@@ -10,7 +10,8 @@ local function recording_component()
 end
 
 local function recording_color()
-	return get_recording() and { fg = "#BF616A" } or { fg = "#60728A" }
+	local c = require("latif.theme").colors
+	return get_recording() and { fg = c.red } or { fg = c.fg_dim }
 end
 
 local _lsp_name = ""
@@ -51,27 +52,34 @@ local diagnostic_signs = {
 	other = " ",
 }
 
--- Nordic-inspired palette
-local C = {
-	bg = "#040405",
-	surface0 = "#040405",
-	surface1 = "#BBC3D4",
-	surface2 = "#040405",
-	text = "#60728A",
-	comment = "#616E88",
-	blue = "#81A1C1",
-	cyan = "#88C0D0",
-	green = "#A3BE8C",
-	red = "#BF616A",
-	violet = "#B48EAD",
-	orange = "#D79784",
-}
+-- Palette follows the active tide-theme (re-synced on every theme change)
+local T = require("latif.theme")
+local C = {}
+local function sync_palette()
+	local t = T.colors
+	C.bg = t.bg
+	C.surface0 = "NONE"
+	C.surface1 = t.fg
+	C.surface2 = "NONE"
+	C.text = t.fg_dim
+	C.comment = t.fg_dim
+	C.blue = t.blue
+	C.cyan = t.cyan
+	C.green = t.green
+	C.red = t.red
+	C.violet = t.magenta
+	C.orange = t.accent2
+end
+sync_palette()
 
-local nordic = {
+local function build_theme()
+	return {
 	normal = {
 		a = { fg = C.bg, bg = C.orange },
-		b = { fg = C.text, bg = C.surface1 },
-		c = { fg = C.text, bg = C.bg },
+		b = { fg = C.text, bg = "NONE" },
+		c = { fg = C.text, bg = "NONE" },
+		x = { fg = C.text, bg = "NONE" },
+		y = { fg = C.text, bg = "NONE" },
 		z = { fg = C.bg, bg = C.orange },
 	},
 	insert = { a = { fg = C.bg, bg = C.green }, z = { fg = C.bg, bg = C.green } },
@@ -84,7 +92,8 @@ local nordic = {
 		c = { fg = C.text, bg = C.surface2 },
 		z = { fg = C.text, bg = C.surface2 },
 	},
-}
+	}
+end
 
 local _mode_map = {
 	["COMMAND"] = "COMMND",
@@ -166,6 +175,7 @@ function M.setup()
 	end
 
 	vim.api.nvim_create_autocmd({ "UIEnter", "ColorScheme" }, {
+		group = vim.api.nvim_create_augroup("TideLualineStatusline", { clear = true }),
 		callback = function()
 			local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
 			local statusline = vim.api.nvim_get_hl(0, { name = "StatusLine" })
@@ -293,7 +303,7 @@ function M.setup()
 
 	lualine.setup({
 		options = {
-			theme = nordic,
+			theme = build_theme(),
 			disabled_filetypes = { "dashboard", "snacks_dashboard" },
 			globalstatus = true,
 			section_separators = { left = " ", right = " " },
@@ -312,8 +322,8 @@ function M.setup()
 				},
 				{
 					github_branch_component,
-					color = { fg = "#60728A" },
-					icon = { "", color = { fg = "#BBC3D4" } },
+					color = { fg = C.text },
+					icon = { "", color = { fg = C.surface1 } },
 					padding = 2,
 				},
 				{
@@ -340,7 +350,20 @@ function M.setup()
 		},
 		extensions = { fzf_ext, oil_ext },
 	})
+	vim.schedule(T.clear_statusline_bg)
 end
+
+-- rebuild the statusline whenever the theme changes
+vim.api.nvim_create_autocmd("User", {
+	pattern = "TideThemeChanged",
+	callback = function()
+		sync_palette()
+		if package.loaded["lualine"] then
+			M.setup()
+			vim.schedule(T.clear_statusline_bg)
+		end
+	end,
+})
 
 function M.refresh_statusline()
 	local ok, lualine = pcall(require, "lualine")

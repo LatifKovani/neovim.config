@@ -33,8 +33,7 @@ return {
 		)
 	end,
 	config = function()
-		vim.api.nvim_set_hl(0, "ToggleTermNormal", { bg = "#040405", fg = "#ebdbb2" })
-		vim.api.nvim_set_hl(0, "ToggleTermBorder", { bg = "#040405", fg = "#565f89" })
+		-- ToggleTermNormal / ToggleTermBorder colours come from latif/theme.lua
 
 		vim.keymap.set("t", "<C-q>", "<C-\\><C-n>:q<CR>", { noremap = true, silent = true, desc = "Quit terminal" })
 		vim.keymap.set("t", "jk", "<C-\\><C-n>", { noremap = true, silent = true, desc = "Exit terminal mode" })

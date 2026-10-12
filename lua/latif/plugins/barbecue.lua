@@ -6,12 +6,15 @@ return {
 		"SmiteshP/nvim-navic",
 		"nvim-tree/nvim-web-devicons",
 	},
-	opts = {
-		theme = {
-			normal = { bg = "#040405", fg = "#f9e2af" },
-			context = { bg = "#040405", fg = "#f9e2af" },
-			dirname = { bg = "#040405", fg = "#aba79f" },
-			seperator = { bg = "#040405", fg = "#cdd6f4" },
-		},
-	},
+	opts = function()
+		local c = require("latif.theme").colors
+		return {
+			theme = {
+				normal = { bg = c.bg, fg = c.yellow },
+				context = { bg = c.bg, fg = c.yellow },
+				dirname = { bg = c.bg, fg = c.fg_dim },
+				separator = { bg = c.bg, fg = c.fg },
+			},
+		}
+	end,
 }

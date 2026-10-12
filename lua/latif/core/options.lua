@@ -25,13 +25,7 @@ vim.api.nvim_create_autocmd("FocusGained", {
 	end,
 })
 
--- Line number color on colorscheme change
-vim.api.nvim_create_autocmd("ColorScheme", {
-	pattern = "*",
-	callback = function()
-		vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ea6962", bold = true })
-	end,
-})
+-- CursorLineNr colour is set per theme in latif/theme.lua (M.overrides)
 
 opt.backspace = "indent,eol,start"
 opt.splitright = true

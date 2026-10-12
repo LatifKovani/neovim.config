@@ -6,8 +6,7 @@ return {
 		local opts = { noremap = true, silent = true }
 		local keymap = vim.keymap
 
-		vim.api.nvim_set_hl(0, "BufferManagerNormal", { bg = "#040405", fg = "#ebdbb2" })
-		vim.api.nvim_set_hl(0, "BufferManagerBorder", { bg = "#040405", fg = "#565f89" })
+		-- BufferManagerNormal / BufferManagerBorder colours come from latif/theme.lua
 
 		require("buffer_manager").setup({
 			select_menu_item_commands = {},
@@ -31,7 +30,8 @@ return {
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = "buffer_manager",
 			callback = function()
-				vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#040405", fg = "#ebdbb2" })
+				local c = require("latif.theme").colors
+				vim.api.nvim_set_hl(0, "NormalFloat", { bg = c.bg, fg = c.fg })
 			end,
 		})
 

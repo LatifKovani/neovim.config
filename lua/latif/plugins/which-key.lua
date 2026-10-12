@@ -34,8 +34,6 @@ return {
 				{ "<leader>n", group = "Notifications", icon = "󰎟" },
 			},
 		})
-		vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = "#040405" })
-		vim.api.nvim_set_hl(0, "WhichKeyBorder", { bg = "#040405", fg = "#565f89" })
-		vim.api.nvim_set_hl(0, "WhichKeyNormal", { bg = "#040405" })
+		-- WhichKey highlight colours come from latif/theme.lua
 	end,
 }

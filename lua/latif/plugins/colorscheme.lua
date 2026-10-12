@@ -1,20 +1,13 @@
+-- Colourschemes. Which one is active is decided by the system theme (see latif/theme.lua):
+-- every scheme below is lazy-loaded on demand; the first spec just kicks the theme module off.
 return {
 	{
 		"sainnhe/gruvbox-material",
 		priority = 1000,
 		lazy = false,
 		config = function()
-			vim.g.gruvbox_material_transparent_background = 1
-			vim.g.gruvbox_material_foreground = "mix"
-			vim.g.gruvbox_material_background = "hard"
-			vim.g.gruvbox_material_ui_contrast = "high"
-			vim.g.gruvbox_material_float_style = "bright"
-			vim.g.gruvbox_material_statusline_style = "mix"
-			vim.g.gruvbox_material_cursor = "auto"
+			require("latif.theme").setup()
 
-			vim.cmd.colorscheme("gruvbox-material")
-
-			vim.api.nvim_set_hl(0, "CurlyBrace", { fg = "#c14a4a" })
 			vim.api.nvim_create_autocmd({ "FileType", "BufEnter", "BufWinEnter" }, {
 				pattern = "*",
 				callback = function()
@@ -23,4 +16,11 @@ return {
 			})
 		end,
 	},
+	{ "gbprod/nord.nvim", lazy = true },
+	{ "catppuccin/nvim", name = "catppuccin", lazy = true },
+	{ "folke/tokyonight.nvim", lazy = true },
+	{ "rose-pine/neovim", name = "rose-pine", lazy = true },
+	{ "rebelot/kanagawa.nvim", lazy = true },
+	{ "sainnhe/everforest", lazy = true },
+	{ "Mofiqul/dracula.nvim", lazy = true },
 }
