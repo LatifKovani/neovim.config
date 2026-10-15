@@ -20,7 +20,7 @@
 
 > Live theme switching (same Neovim session, no restart)
 
-![Theme switching](./assets/theme-switch.png)
+![Theme switching](./assets/theme-switcher.png)
 
 ---
 
