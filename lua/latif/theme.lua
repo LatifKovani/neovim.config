@@ -95,6 +95,35 @@ local schemes = {
 			require("dracula").setup({ transparent_bg = true })
 		end,
 	},
+	["ayu"] = {
+		plugin = "neovim-ayu",
+		colorscheme = "ayu-dark",
+		setup = function()
+			require("ayu").setup({
+				mirage = false,
+				overrides = {
+					Normal = { bg = "None" },
+					NormalFloat = { bg = "None" },
+					SignColumn = { bg = "None" },
+					ColorColumn = { bg = "None" },
+					CursorLine = { bg = "None" },
+					CursorColumn = { bg = "None" },
+					Folded = { bg = "None" },
+					FoldColumn = { bg = "None" },
+					VertSplit = { bg = "None" },
+				},
+			})
+		end,
+	},
+	["github-dark"] = {
+		plugin = "github-nvim-theme",
+		colorscheme = "github_dark",
+		setup = function()
+			require("github-theme").setup({
+				options = { transparent = true },
+			})
+		end,
+	},
 }
 M.schemes = schemes
 
@@ -124,35 +153,93 @@ function M.load()
 	return true
 end
 
+-- Groups whose background must always be the terminal's (transparent), whatever the colourscheme
+-- does. Only groups that already exist are touched, so a lazy plugin that defines its groups later
+-- keeps its own foreground/links (the VeryLazy pass below catches those once they exist).
+local TRANSPARENT_GROUPS = {
+	"Normal",
+	"NormalNC",
+	"NormalFloat",
+	"NormalSB",
+	"FloatBorder",
+	"FloatTitle",
+	"SignColumn",
+	"FoldColumn",
+	"LineNr",
+	"EndOfBuffer",
+	"WinSeparator",
+	"VertSplit",
+	"StatusLine",
+	"StatusLineNC",
+	"WinBar",
+	"WinBarNC",
+	"TabLineFill",
+	-- nvim-tree (the sidebar that was keeping the theme's own bg)
+	"NvimTreeNormal",
+	"NvimTreeNormalNC",
+	"NvimTreeNormalFloat",
+	"NvimTreeEndOfBuffer",
+	"NvimTreeWinSeparator",
+	"NvimTreeStatusLine",
+	"NvimTreeStatusLineNC",
+}
+
+local function clear_bg(groups)
+	for _, g in ipairs(groups) do
+		local cur = vim.api.nvim_get_hl(0, { name = g, link = false })
+		if next(cur) ~= nil then
+			pcall(vim.api.nvim_set_hl, 0, g, vim.tbl_extend("force", cur, { bg = "NONE" }))
+		end
+	end
+end
+
+-- Backgrounds are never themed: only text / accent colours follow the theme.
+local function apply_transparency()
+	local c = M.colors
+	local set = vim.api.nvim_set_hl
+	clear_bg(TRANSPARENT_GROUPS)
+	for _, g in ipairs({ "ToggleTermNormal", "BufferManagerNormal" }) do
+		set(0, g, { bg = "NONE", fg = c.fg })
+	end
+	for _, g in ipairs({ "ToggleTermBorder", "BufferManagerBorder", "WhichKeyBorder" }) do
+		set(0, g, { bg = "NONE", fg = c.fg_dim })
+	end
+	set(0, "WhichKeyFloat", { bg = "NONE" })
+	set(0, "WhichKeyNormal", { bg = "NONE" })
+	-- barbecue sets its own groups on ColorScheme, so this also runs after it (see overrides)
+	set(0, "barbecue_normal", { bg = "NONE", fg = c.yellow })
+	set(0, "barbecue_context", { bg = "NONE", fg = c.yellow })
+	set(0, "barbecue_dirname", { bg = "NONE", fg = c.fg_dim })
+	set(0, "barbecue_separator", { bg = "NONE", fg = c.fg })
+	M.clear_statusline_bg()
+end
+
 -- Custom highlights that the colourschemes know nothing about. Re-applied after every :colorscheme.
 function M.overrides()
 	local c = M.colors
 	local set = vim.api.nvim_set_hl
 	set(0, "CursorLineNr", { fg = c.red, bold = true })
 	set(0, "CurlyBrace", { fg = c.red })
-	for _, g in ipairs({ "ToggleTermNormal", "BufferManagerNormal" }) do
-		set(0, g, { bg = c.bg, fg = c.fg })
-	end
-	for _, g in ipairs({ "ToggleTermBorder", "BufferManagerBorder", "WhichKeyBorder" }) do
-		set(0, g, { bg = c.bg, fg = c.fg_dim })
-	end
-	set(0, "WhichKeyFloat", { bg = c.bg })
-	set(0, "WhichKeyNormal", { bg = c.bg })
-	-- barbecue sets its own groups on ColorScheme, so go after it
-	vim.schedule(function()
-		set(0, "barbecue_normal", { bg = c.bg, fg = c.yellow })
-		set(0, "barbecue_context", { bg = c.bg, fg = c.yellow })
-		set(0, "barbecue_dirname", { bg = c.bg, fg = c.fg_dim })
-		set(0, "barbecue_separator", { bg = c.bg, fg = c.fg })
-		M.clear_statusline_bg()
-	end)
+	apply_transparency()
+	-- plugins (nvim-tree, barbecue, ...) re-set their groups on ColorScheme too, so go after them
+	vim.schedule(apply_transparency)
 end
 
 -- The statusline must stay transparent like the terminal: only text and mode colours may change.
 function M.clear_statusline_bg()
 	local set = vim.api.nvim_set_hl
-	pcall(set, 0, "StatusLine", vim.tbl_extend("force", vim.api.nvim_get_hl(0, { name = "StatusLine", link = false }), { bg = "NONE" }))
-	pcall(set, 0, "StatusLineNC", vim.tbl_extend("force", vim.api.nvim_get_hl(0, { name = "StatusLineNC", link = false }), { bg = "NONE" }))
+	pcall(
+		set,
+		0,
+		"StatusLine",
+		vim.tbl_extend("force", vim.api.nvim_get_hl(0, { name = "StatusLine", link = false }), { bg = "NONE" })
+	)
+	pcall(
+		set,
+		0,
+		"StatusLineNC",
+		vim.tbl_extend("force", vim.api.nvim_get_hl(0, { name = "StatusLineNC", link = false }), { bg = "NONE" })
+	)
 	local ok, all = pcall(vim.api.nvim_get_hl, 0, {})
 	if not ok then
 		return
@@ -225,6 +312,14 @@ function M.setup()
 	vim.api.nvim_create_autocmd("ColorScheme", {
 		group = vim.api.nvim_create_augroup("TideThemeOverrides", { clear = true }),
 		callback = M.overrides,
+	})
+	-- lazy plugins (nvim-tree, barbecue, ...) define their highlights after startup; catch them once
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "VeryLazy",
+		once = true,
+		callback = function()
+			vim.schedule(apply_transparency)
+		end,
 	})
 	M.load()
 	M.apply()

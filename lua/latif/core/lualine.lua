@@ -52,12 +52,16 @@ local diagnostic_signs = {
 	other = " ",
 }
 
+-- Terminal background (same as kitty / tmux). Text on coloured blocks uses it, so the
+-- blocks look cut out of the transparent terminal instead of using the theme's own bg.
+local TERMINAL_BG = "#040405"
+
 -- Palette follows the active tide-theme (re-synced on every theme change)
 local T = require("latif.theme")
 local C = {}
 local function sync_palette()
 	local t = T.colors
-	C.bg = t.bg
+	C.bg = TERMINAL_BG
 	C.surface0 = "NONE"
 	C.surface1 = t.fg
 	C.surface2 = "NONE"
@@ -69,29 +73,50 @@ local function sync_palette()
 	C.red = t.red
 	C.violet = t.magenta
 	C.orange = t.accent2
+
+	-- Mode colours: NORMAL follows the theme accent, the other modes are picked
+	-- so that no two modes ever share a colour inside one theme.
+	local used = { [t.accent:lower()] = true }
+	local function pick(...)
+		for _, col in ipairs({ ... }) do
+			if col and not used[col:lower()] then
+				used[col:lower()] = true
+				return col
+			end
+		end
+		return t.accent
+	end
+	C.mode = {
+		normal = t.accent,
+		insert = pick(t.green, t.cyan, t.yellow),
+		visual = pick(t.magenta, t.cyan, t.blue),
+		replace = pick(t.red, t.orange),
+		command = pick(t.yellow, t.blue, t.magenta),
+	}
 end
 sync_palette()
 
 local function build_theme()
+	local m = C.mode
 	return {
-	normal = {
-		a = { fg = C.bg, bg = C.orange },
-		b = { fg = C.text, bg = "NONE" },
-		c = { fg = C.text, bg = "NONE" },
-		x = { fg = C.text, bg = "NONE" },
-		y = { fg = C.text, bg = "NONE" },
-		z = { fg = C.bg, bg = C.orange },
-	},
-	insert = { a = { fg = C.bg, bg = C.green }, z = { fg = C.bg, bg = C.green } },
-	visual = { a = { fg = C.bg, bg = C.cyan }, z = { fg = C.bg, bg = C.cyan } },
-	replace = { a = { fg = C.bg, bg = C.red }, z = { fg = C.bg, bg = C.red } },
-	command = { a = { fg = C.bg, bg = C.violet }, z = { fg = C.bg, bg = C.violet } },
-	inactive = {
-		a = { fg = C.text, bg = C.surface2 },
-		b = { fg = C.text, bg = C.surface2 },
-		c = { fg = C.text, bg = C.surface2 },
-		z = { fg = C.text, bg = C.surface2 },
-	},
+		normal = {
+			a = { fg = C.bg, bg = m.normal },
+			b = { fg = C.text, bg = "NONE" },
+			c = { fg = C.text, bg = "NONE" },
+			x = { fg = C.text, bg = "NONE" },
+			y = { fg = C.text, bg = "NONE" },
+			z = { fg = C.bg, bg = m.normal },
+		},
+		insert = { a = { fg = C.bg, bg = m.insert }, z = { fg = C.bg, bg = m.insert } },
+		visual = { a = { fg = C.bg, bg = m.visual }, z = { fg = C.bg, bg = m.visual } },
+		replace = { a = { fg = C.bg, bg = m.replace }, z = { fg = C.bg, bg = m.replace } },
+		command = { a = { fg = C.bg, bg = m.command }, z = { fg = C.bg, bg = m.command } },
+		inactive = {
+			a = { fg = C.text, bg = C.surface2 },
+			b = { fg = C.text, bg = C.surface2 },
+			c = { fg = C.text, bg = C.surface2 },
+			z = { fg = C.text, bg = C.surface2 },
+		},
 	}
 end
 
@@ -358,10 +383,23 @@ vim.api.nvim_create_autocmd("User", {
 	pattern = "TideThemeChanged",
 	callback = function()
 		sync_palette()
-		if package.loaded["lualine"] then
-			M.setup()
-			vim.schedule(T.clear_statusline_bg)
+		if not package.loaded["lualine"] then
+			return
 		end
+		-- run after the ColorScheme handlers (lualine's own, our overrides) have finished
+		vim.schedule(function()
+			-- drop lualine's cached modules/highlights so the new palette really applies
+			for name in pairs(package.loaded) do
+				if name == "lualine" or name:match("^lualine%.") then
+					package.loaded[name] = nil
+				end
+			end
+			M.setup()
+			pcall(function()
+				require("lualine").refresh({ scope = "all", place = { "statusline" } })
+			end)
+			vim.schedule(T.clear_statusline_bg)
+		end)
 	end,
 })
 

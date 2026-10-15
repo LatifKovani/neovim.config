@@ -1,6 +1,6 @@
 # 🌑 Neovim Config
 
-> A fast, minimal Neovim setup built for modern web development — TypeScript, React, Python, and Lua.
+> A fast, minimal Neovim setup built for modern web development — TypeScript, React, Python, and Lua. Follows your system-wide theme and re-colours itself live.
 
 ![Neovim](https://img.shields.io/badge/Neovim-0.10+-brightgreen?style=flat-square&logo=neovim)
 ![Lua](https://img.shields.io/badge/Config-Lua-blue?style=flat-square&logo=lua)
@@ -18,6 +18,10 @@
 
 ![Editing](./assets/editing2.png)
 
+> Live theme switching (same Neovim session, no restart)
+
+![Theme switching](./assets/theme-switch.png)
+
 ---
 
 ## ⚡ Requirements
@@ -29,6 +33,7 @@
 - Node.js — for TypeScript LSP
 - Python 3 — for Python LSP
 - `prettierd`, `stylua`, `eslint_d` — installed automatically via Mason
+- _(optional)_ `tide-theme` — system-wide theme switcher that drives the colourscheme (see [Theme Switcher](#-theme-switcher)). Without it, the config falls back to gruvbox-material.
 
 ---
 
@@ -52,9 +57,78 @@ On first launch, run `:Lazy sync` to ensure everything is installed, then restar
 
 ---
 
-## 🎨 Colorscheme
+## 🎨 Theme Switcher
 
-**[gruvbox-material](https://github.com/sainnhe/gruvbox-material)** with a hard dark background, transparent window, and mix foreground palette. Curly braces are highlighted in a custom red for better visibility.
+Neovim doesn't pick its own colourscheme — it **follows the system-wide theme** managed by `tide-theme`. Switch the theme from the Tide Island theme picker (or from the terminal) and every open Neovim instance re-colours itself instantly, alongside kitty, tmux, hyprlock and the rest of the desktop.
+
+```bash
+tide-theme apply nord      # apply a specific theme
+tide-theme next            # cycle forward
+tide-theme prev            # cycle backward
+tide-theme list --json     # list available themes
+```
+
+### How it works
+
+1. `tide-theme` writes the active theme to `~/.config/tide-theme/current.json` (palette + which Neovim scheme to use).
+2. On startup, `lua/latif/theme.lua` reads that file, loads the matching colourscheme and applies it.
+3. While Neovim runs, it **watches `~/.config/tide-theme/`** (libuv `fs_event`, debounced) and re-applies the colourscheme whenever `current.json` changes. No restart needed.
+4. After every colourscheme change, custom highlights are re-applied and a `User TideThemeChanged` autocmd fires so other modules (like lualine) can rebuild themselves.
+
+### Supported themes
+
+| Theme            | Neovim colourscheme                                                   |
+| ---------------- | --------------------------------------------------------------------- |
+| Nord             | [nord.nvim](https://github.com/gbprod/nord.nvim)                      |
+| Gruvbox Material | [gruvbox-material](https://github.com/sainnhe/gruvbox-material)       |
+| Catppuccin Mocha | [catppuccin](https://github.com/catppuccin/nvim) (`mocha`)            |
+| Tokyo Night      | [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) (`night`) |
+| Rosé Pine        | [rose-pine](https://github.com/rose-pine/neovim)                      |
+| Kanagawa         | [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) (`wave`)    |
+| Everforest       | [everforest](https://github.com/sainnhe/everforest) (hard)            |
+| Dracula          | [dracula.nvim](https://github.com/Mofiqul/dracula.nvim)               |
+
+All schemes run with a **transparent background**, so the terminal's opacity and wallpaper always show through. Only gruvbox-material is loaded eagerly; every other scheme is lazy-loaded the first time you switch to it.
+
+### What follows the theme
+
+- **Colourscheme** — swapped live with transparency enforced per scheme
+- **Lualine** — palette is re-synced and the statusline is rebuilt on every theme change; its background stays transparent
+- **Custom highlights** — `CursorLineNr`, the red curly braces (`{}`), toggleterm, buffer manager, which-key and barbecue breadcrumbs are all re-coloured from the theme palette
+- **Palette access** — `require("latif.theme").colors` always holds the current palette (`bg`, `fg`, `fg_dim`, `accent`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `orange`, …) and is updated in place, so any module can use it
+
+### Hooking into theme changes
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TideThemeChanged",
+  callback = function()
+    local c = require("latif.theme").colors
+    -- re-apply your own highlights using c.bg, c.fg, c.accent, ...
+  end,
+})
+```
+
+### Adding a new theme
+
+1. Add a JSON file to `~/.config/tide-theme/themes/` with a `colors` table and `"nvim": { "scheme": "<id>" }`.
+2. If it needs a new colourscheme plugin, add it (lazy) to `lua/latif/plugins/colorscheme.lua`.
+3. Register the scheme in the `schemes` table in `lua/latif/theme.lua` (plugin name, colourscheme name and a `setup` function that enables transparency).
+4. Run `:Lazy sync`, then `tide-theme apply <id>`.
+
+### Notes
+
+- If `current.json` is missing, Neovim falls back to **gruvbox-material** with the default palette.
+- If a scheme fails to load (e.g. a newly added plugin isn't installed yet), you get a warning — run `:Lazy sync` and restart.
+- Half-written files are ignored; the next change event retries automatically.
+
+---
+
+## 🖌️ Colorscheme
+
+Default / fallback: **[gruvbox-material](https://github.com/sainnhe/gruvbox-material)** with a hard dark background, transparent window, and mix foreground palette. Curly braces are highlighted in a custom red for better visibility (the red follows the active theme).
+
+The active scheme is chosen by the system theme — see [Theme Switcher](#-theme-switcher).
 
 ---
 
@@ -68,6 +142,19 @@ On first launch, run `:Lazy sync` to ensure everything is installed, then restar
 | [snacks.nvim](https://github.com/folke/snacks.nvim)       | Notifications, dashboard, input UI |
 | [which-key.nvim](https://github.com/folke/which-key.nvim) | Keymap hints                       |
 | [noice.nvim](https://github.com/folke/noice.nvim)         | Cmdline popup UI                   |
+
+### Colourschemes (driven by the theme switcher)
+
+| Plugin                                                          | Theme            |
+| --------------------------------------------------------------- | ---------------- |
+| [gruvbox-material](https://github.com/sainnhe/gruvbox-material) | Gruvbox Material |
+| [nord.nvim](https://github.com/gbprod/nord.nvim)                | Nord             |
+| [catppuccin](https://github.com/catppuccin/nvim)                | Catppuccin Mocha |
+| [tokyonight.nvim](https://github.com/folke/tokyonight.nvim)     | Tokyo Night      |
+| [rose-pine](https://github.com/rose-pine/neovim)                | Rosé Pine        |
+| [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)       | Kanagawa         |
+| [everforest](https://github.com/sainnhe/everforest)             | Everforest       |
+| [dracula.nvim](https://github.com/Mofiqul/dracula.nvim)         | Dracula          |
 
 ### LSP & Completion
 
@@ -105,14 +192,14 @@ On first launch, run `:Lazy sync` to ensure everything is installed, then restar
 
 ### UI
 
-| Plugin                                                                          | Purpose                   |
-| ------------------------------------------------------------------------------- | ------------------------- |
-| [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)                    | Statusline                |
-| [barbecue.nvim](https://github.com/utilyre/barbecue.nvim)                       | Winbar breadcrumbs        |
-| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua)                     | File explorer             |
-| [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) | Indent guides             |
-| [todo-comments.nvim](https://github.com/folke/todo-comments.nvim)               | Highlighted TODO comments |
-| [trouble.nvim](https://github.com/folke/trouble.nvim)                           | Diagnostics list          |
+| Plugin                                                                          | Purpose                                  |
+| ------------------------------------------------------------------------------- | ---------------------------------------- |
+| [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)                    | Statusline (re-themes live, transparent) |
+| [barbecue.nvim](https://github.com/utilyre/barbecue.nvim)                       | Winbar breadcrumbs                       |
+| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua)                     | File explorer                            |
+| [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) | Indent guides                            |
+| [todo-comments.nvim](https://github.com/folke/todo-comments.nvim)               | Highlighted TODO comments                |
+| [trouble.nvim](https://github.com/folke/trouble.nvim)                           | Diagnostics list                         |
 
 ### Editing
 
